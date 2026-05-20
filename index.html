@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RouteMaster Pro | Shortest + Longest Path | Floyd-Warshall | PKR</title>
+    
+    <!-- Leaflet.js CSS + JS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+   
+</head>
+<body class="dark-mode">
+    <div class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">🌙</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🚚 RouteMaster Pro </h1>
+            <p>Choose Shortest Path (Green) OR Longest Path (Red) </p>
+        </div>
+
+        <div class="dashboard">
+            <!-- LEFT SIDE: MAP -->
+            <div class="map-card">
+                <h3>🗺️ Route Map</h3>
+                <div id="map"></div>
+                <div style="margin-top: 10px; font-size: 12px; text-align: center; opacity: 0.7;">
+                    🟢 Green = Shortest Path | 🔴 Red = Longest Path | 📍 Markers = Cities
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: DATA -->
+            <div class="data-card">
+                <h3>📊 Route Calculator (PKR)</h3>
+                
+                <!-- Location Selection -->
+                <div class="location-row">
+                    <div class="location-box">
+                        <label>📍 From</label>
+                        <select id="startLocation">
+                            <option value="Karachi">Karachi</option>
+                            <option value="Landhi">Landhi</option>
+                            <option value="Thatta">Thatta</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                        </select>
+                    </div>
+                    <div class="location-box">
+                        <label>📍 To</label>
+                        <select id="destLocation">
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Karachi">Karachi</option>
+                            <option value="Landhi">Landhi</option>
+                            <option value="Thatta">Thatta</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Path Type Selection - User Choice -->
+                <div class="path-type-section">
+                    <div class="path-type-title">🛣️ Select Path Type:</div>
+                    <div class="path-options">
+                        <div class="path-option shortest active" id="shortestBtn" onclick="selectPathType('shortest')">
+                            🟢 Shortest Path (Minimum Distance)
+                        </div>
+                        <div class="path-option longest" id="longestBtn" onclick="selectPathType('longest')">
+                            🔴 Longest Path (Maximum Distance)
+                        </div>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="findPath()">🚀 Find Path & Update Map</button>
+
+                <!-- Floyd-Warshall Matrix -->
+                <div class="matrix-section" id="matrixSection" style="display: none;">
+                    <h4>📐 Distance Matrix (All Pairs — km)</h4>
+                    <div id="distanceMatrixTable"></div>
+                    <p style="font-size: 10px; margin-top: 8px; opacity: 0.7;">
+                        ⚡ Floyd-Warshall | Dynamic Programming | O(V³)
+                    </p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="distanceValue">--</div>
+                        <div class="stat-label">Total Distance (km)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="timeValue">--</div>
+                        <div class="stat-label">Est. Time (hours)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="fuelValue">--</div>
+                        <div class="stat-label">Fuel Cost (PKR)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="tollValue">--</div>
+                        <div class="stat-label">Toll Tax (PKR)</div>
+                    </div>
+                </div>
+
+                <!-- Route Path -->
+                <div class="route-path" id="routePath">
+                    📍 Select start, destination, and path type, then click Find Path
+                </div>
+
+                <!-- Vehicle Comparison Table -->
+                <h3 style="margin-top: 15px;">🚗 Vehicle Comparison (PKR)</h3>
+                <table class="vehicle-table" id="vehicleTable">
+                    <thead>
+                        <tr><th>Vehicle</th><th>Speed</th><th>Mileage</th><th>Time</th><th>Fuel (PKR)</th><th>Total (PKR)</th></tr>
+                    </thead>
+                    <tbody id="vehicleBody"></tbody>
+                </table>
+
+                <!-- Chart -->
+                <div class="chart-container">
+                    <canvas id="costChart"></canvas>
+                </div>
+
+                <!-- Export Button -->
+                <button class="export-btn" onclick="exportPDF()">📄 Export Report as PDF</button>
+            </div>
+        </div>
+    </div>
+<script src="script.js"></script>
+    
+</body>
+</html>
